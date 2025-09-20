@@ -1,6 +1,6 @@
 import { Component } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
-import { from, of } from 'rxjs'
+import { from, fromEvent, of } from 'rxjs'
 
 @Component({
   selector: 'app-root',
@@ -9,32 +9,58 @@ import { from, of } from 'rxjs'
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  protected ofData: number[] = []
-  protected fromData: number = 0
+  protected ofData: object[] = []
+
   // observable
-  private ofNumebers$ = of([1, 2, 3, 4, 5])
-  private fromNumebers$ = from([1, 2, 3, 4, 5])
+  private ofUsers$ = of([
+    {
+      id: 1,
+      name: 'Leanne Graham',
+      username: 'Bret',
+      age: 30,
+    },
+    {
+      id: 2,
+      name: 'Ervin Howell',
+      username: 'Antonette',
+      age: 25,
+    },
+    {
+      id: 3,
+      name: 'Clementine Bauch',
+      username: 'Samantha',
+      age: 28,
+    },
+  ])
 
   constructor() {
     // observers
     // All the array at once
-    this.ofNumebers$.subscribe((data) => {
+
+    // Users (object array)
+    this.ofUsers$.subscribe((data) => {
       this.ofData = data
       console.log('subscriber', data)
     })
 
-    // One by one
-    this.fromNumebers$.subscribe((data) => {
-      this.fromData = data
-      console.log('subscriber', data)
+    // Promise
+    const message = new Promise<string>((resolve) => {
+      setTimeout(() => {
+        resolve('Hello from Promise')
+      }, 2000)
     })
-    this.addNumbers()
-  }
 
-  // TODO: investigate how to add numbers to an Observable
-  addNumbers(): void {
-    setTimeout(() => {
-      this.ofNumebers$ = of([6, 7, 8, 9, 10])
-    }, 6000)
+    const message$ = from(message)
+
+    message$.subscribe((message) => {
+      console.log(message)
+    })
+
+    // Events
+    const clickEvent$ = fromEvent(document, 'click')
+
+    clickEvent$.subscribe((e) => {
+      console.log('message from event', e)
+    })
   }
 }
